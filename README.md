@@ -19,3 +19,4 @@
 |接口隔離原則(Interface Segregation Principle) | 使用多個專用的接口(Interface),而不是使用單一的總接口.(能避免Client實現一些沒必要的功能) |
 |合成複用原則(Composition Reuse Principle) | 盡量使用Object Composition(在要使用的Object的地方把用到的Object注入),而不是繼承能達到目的.(減少依賴)|
 |迪米特法則(Law of Demeter) | 一個軟件實體應盡可能地與其他實體發生互相作用.(就是不用跟不是朋友(注入)的Object 直接通訊)|
+---
