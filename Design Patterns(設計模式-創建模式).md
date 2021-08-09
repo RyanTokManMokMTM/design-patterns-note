@@ -716,7 +716,7 @@
     >       	    	return HolderClass::instance
     >       		}
     >       	}
-    >                               
+    >                                     
     >       //就是靜態單例沒有作為Singleton的成員 所以加載時候不會被實例化
     >       //getInstance()被呼叫時候才會呼叫HolderClass 並實例化
     >       ```
@@ -1023,433 +1023,433 @@
 * 創造者模式(Builder pattern)
 
 
-  * > 定義(多個不同的components 組成複雜的Product):
-    >
-    > 將一個複製的Object的建構與它的表示(組件Component)分離，使得同樣的建構過程(Component的建構)可以創建不同的表示(同一個Component可以與不用的Components組合)
-    >
-    > > **與抽象工廠(Absturct)的區別**
-    > >
-    > > * 抽象工廠:就是生產某一個部件的工廠，而且是放回一些了相關的Product
-    > > * 創建者模式:通過具體的Builder去指導Director去生成複雜的對象
-    >
-    > ---
-    >
-    > **優點**
-    >
-    > * Client無需知道建立/組成產品的細節，讓Client在相同的過程下(Builder不一樣)就可以建立出不用的Product
-    > * 每一個具體的`Builder`都是互相獨立的，如要新增`Builder`的具體class，直進行擴展。而且`Director`是對`Absbstruct class`進行編程,所以無需修改代碼，符合`Open-Close Principe`,且系統擴展也方便
-    > * 可以增加程序(`HookMethod`)來更精細得控制創建過程
-    >
-    > **缺點**
-    >
-    > * 每個產品的建立都有相似的部分，在這種情況下才適合用`Builder Patterns`,如那種很多Component都不一樣的，不適合使用，所以，使用受到限制
-    > * 如果某個Product需要多個Builder來實現複雜的變化，會導致吸引變得龐大，會增加系統的理解難點和運行成本
-    >
-    > ---
-    >
-    > *概念*:
-    >
-    > > Builder:為抽象(Abstuct)/界面(Interface),提供創建各部分的Method 以及return的Product
-    > >
-    > > ConcreteBuilder:Implement Builder ，提供各個Component的建立方法以及裝備方法
-    > >
-    > > Product :包含多個Components的複雜Object
-    > >
-    > > Director : 負責安排Builder組裝的順序，Client會之間與Director 進行互動，都過setter等注入方式配置複雜Object的屬性
-    >
-    > ---
-    > ```c++
-    > //簡單的例子
-    > //Product class
-    > class Product{
-    >     private:
-    >     	//組成的Component
-    >     	std::string partA;
-    >     	std::string partB;
-    >     	std::string partC;
-    >     public:
-    >     //各個Component的設置以及獲取方法
-    >     //PartA,B,C的setter跟getter
-    > }
-    > ```
-    >
-    > ```c++
-    > //Builder 的Abstract ：builder將會實現什麼方法
-    > class Builder{
-    >     protected Product* product = new Product(); //新建Product,透過setter getter 去改變
-    >     pubilc:
-    >     	virtual void buildPartA() = 0;
-    >     	virtual void buildPartB() = 0;
-    >     	virtual void buildPartC() = 0;
-    > 
-    >     	//工廠方法
-    >     	Product *getResult(){
-    >             return product
-    >         }
-    > }
-    > ```
-    >
-    > ```c++
-    > //Director :建立Product的順序，以及分離Client和Creation
-    > class Director{
-    >     private:
-    >     	Builder* builder; //用什麼builder 去build Product
-    >     public:
-    >     	Director(Builder* builder){
-    >             this->builder = builder
-    >         }
-    > 
-    >     	//修改Product的建立的builder
-    >     	void setBuilder(Builder* builder){
-    >             this->builder = builder
-    >         }
-    > 
-    >     	Product* productBuild(){
-    >             //如何建立Product
-    >             //假設順序A B C
-    >             builder->buildPartA();
-    >             builder->buildPartB();
-    >             builder->buildPartC();
-    >             return builder->getResult(); //完成後返回
-    >         }
-    > }
-    > 
-    > ```
-    >
-    > ```c++
-    > //Client
-    > int main(){
-    >     Builder* builder = new ConcreteBuilder(); //使用此builder 建立Product
-    >     Director* director = new Director(builder);
-    >     Product* product = director->construct(); //返回 建立好的Product
-    >     //...
-    >     return
-    > }
-    > ```
-    >
-    > ---
-    >
-    > ```mermaid
-    > classDiagram
-    > 	ActorBuilder <|-- HeroBuilder
-    > 	ActorBuilder <|-- AngelBuilder
-    > 	ActorBuilder <|-- DevilBuilder
-    > 	ActorBuilder *-- Actor
-    > 	ActorController ..> ActorBuilder
-    > 
-    > 
-    > 	class Actor{
-    >         -type : stirng
-    >         -sex : string
-    >         -face : string
-    >         -constume : string
-    >         -hairstyle : string
-    >         +void setType(string type)
-    >         +void setSex(string type)
-    >         +void setFace(string type) 
-    >         +void setCostume(string type)
-    >         +void setHairStyle(string type) 
-    >         +string getType()
-    >         +string getSex()
-    >         +string getFace()
-    >         +string getCostume()
-    >         +string getHairStyle()
-    > 	}
-    > 
-    > 	class ActorBuilder{
-    > 		#actor:Actor
-    > 		+void buildType()
-    > 		+void buildSex()
-    > 		+void buildFace()
-    > 		+void buildCostume()
-    > 		+void buildHairStyle()
-    > 		+Actor createActor()
-    > 	}
-    > 
-    > 	class HeroBuilder{
-    > 		#actor:Actor
-    > 		+void buildType()
-    > 		+void buildSex()
-    > 		+void buildFace()
-    > 		+void buildCostume()
-    > 		+void buildHairStyle()
-    > 		+Actor createActor()
-    > 	}
-    > 
-    > 	class AngelBuilder{
-    > 		+void buildType()
-    > 		+void buildSex()
-    > 		+void buildFace()
-    > 		+void buildCostume()
-    > 		+void buildHairStyle()
-    > 	}
-    > 
-    > 	class DevilBuilder{
-    > 		+void buildType()
-    > 		+void buildSex()
-    > 		+void buildFace()
-    > 		+void buildCostume()
-    > 		+void buildHairStyle()
-    > 	}
-    > 
-    > 	class ActorController{
-    > 		+Actor construct(ActorBuilder)
-    > 	}
-    > ```
-    > ```c++
-    > //以上Class Diagram的實際例子
-    > //Actor(Product)
-    > class Actor{
-    >     private:
-    > 		std::string type;
-    >     	std::string sex; 
-    >     	std::string face
-    >     	std::string costume;
-    >     	std::string hairStyle;
-    >     public:
-    >     	void setType(std::string type){
-    >             //set the type
-    >         }
-    > 
-    >     	void setSex(std::string sex){
-    >             //set the sex
-    >         }
-    > 
-    >     	void setFace(std::string face){
-    >             //set the face
-    >         }
-    > 
-    >     	void setCostume(std::strig costume){
-    >             //set the custume
-    >         }
-    > 
-    >     	void setHairStyle(std::string HairStyle){
-    >             //set the hairStyle
-    >         }
-    > 
-    >     	std::string getType(){
-    >             //return the type
-    >         }
-    > 
-    >         std::string getSex(){
-    >             //return the type
-    >         }
-    > 
-    >         std::string getFace(){
-    >             //return the type
-    >         }
-    > 
-    >         std::string getCostume(){
-    >             //return the type
-    >         }
-    > 
-    >         std::string getHairStyle(){
-    >             //return the type
-    >         }
-    > }
-    > ```
-    >
-    > ```c++
-    > //ActorBuilder：Builder(Abstruct)
-    > class ActorBuilder{
-    >     protected:
-    >     	Actor* actor = new Actor();
-    >     pubilc:
-    >     	virtual void buildType() = 0;
-    >     	virtual void buildSex() = 0;
-    >         virtual void buildFace() = 0;
-    >         virtual void buildCostume() = 0;
-    >     	virtual void buildHairStyle() = 0;
-    >         Actor* createActor(){
-    >             return actor;
-    >         };
-    > }
-    > ```
-    >
-    > ```c++
-    > //Implement Builder
-    > //Hero
-    > class HeroActor{
-    >     pubilc:
-    >     	void buildType(){
-    >             this->actor->setType("Hero");
-    >         };
-    >     	void buildSex(){
-    >             this->actor->setSex("Male");
-    >         };
-    >        	void buildFace(){
-    >             this->actor->setFace("Handsome");
-    >         };
-    >         void buildCostume(){
-    >             this->actor->setCostume("Armor");
-    >         };
-    >     	void buildHairStyle(){
-    >             this->actor->setHairStyle("Elegant");
-    >         };
-    > }
-    > 
-    > //Angle
-    > class AngleActor{
-    >     pubilc:
-    >     	void buildType(){
-    >             this->actor->setType("Angle");
-    >         };
-    >     	void buildSex(){
-    >             this->actor->setSex("Female");
-    >         };
-    >        	void buildFace(){
-    >              this->actor->setFace("Pretty");
-    >         };
-    >         void buildCostume(){
-    >             this->actor->setCostume("White Skirt");
-    >         };
-    >     	void buildHairStyle(){
-    >             this->actor->setHairStyle("Long Hair");
-    >         };
-    > }
-    > 
-    > //Devil
-    > class DevilActor{
-    >     pubilc:
-    >     	void buildType(){
-    >             this->actor->setType("Devil");
-    >         };
-    >     	void buildSex(){
-    >             this->actor->setSex("Demon");
-    >         };
-    >        	void buildFace(){
-    >             this->actor->setFace("gly");
-    >         };
-    >         void buildCostume(){
-    >              this->actor->setCostume("Black Clothes");
-    >         };
-    >     	void buildHairStyle(){
-    >             this->actor->setHairStyle("Bald");
-    >         };
-    > }
-    > ```
-    >
-    > ```c++
-    > //ActorContoller:Director
-    > class ActorController{
-    > 	public:
-    >     	Actor* construct(ActorBuilder ab){
-    >             //Actor的建構過程
-    >             Actor* actor;
-    >             ab->buildType();
-    >             ab->buildSex();
-    >             ab->buildFace();
-    >             ab->buildCostume();
-    >             ab->buildHairStyle();
-    >             actor = ab->createActor();
-    >             retur actor; //返回建構完成的Actor
-    >         }
-    > }
-    > ```
-    >
-    > ```c++
-    > //Client
-    > int main(){
-    >     //生成hero actor
-    >     ActorBuilder* heroBuilder = new HeroBuilder();
-    >     ActorController* acController = new ActorController();
-    >     Actor* ac = acController(heroBuilder);
-    > 
-    >     //生成Angel actor
-    >     ActorBuilder* angelBuilder = new angelBuilder();
-    >     ActorController* acController2 = new ActorController();
-    >     Actor* ac = acController2(angelBuilder);
-    > 
-    >     //生成Devil actor
-    >     ActorBuilder* devilBuilder = new DevilBuilder();
-    >     ActorController* acController3 = new ActorController();
-    >     Actor* ac = acController3(devilBuilder);
-    > }
-    > ```
-    >
-    > > **可以簡化以上例子(如何建構的過程不複雜，可以把Director的``construct``寫到builder``static method``)**
-    > >
-    > > ```c++
-    > > class ActorBuilder{
-    > >  protected:
-    > >  	static Actor* actor = new Actor();
-    > >  pubilc:
-    > >  	virtual void buildType() = 0;
-    > >  	virtual void buildSex() = 0;
-    > >      virtual void buildFace() = 0;
-    > >      virtual void buildCostume() = 0;
-    > >  	virtual void buildHairStyle() = 0;
-    > >      Actor* createActor(){
-    > >          return actor;
-    > >      };
-    > > 
-    > >  	static Actor* consturct(ActorBuilder* ab){
-    > >          ab->buildType();
-    > >          ab->buildSex();
-    > >          ab->buildFace();
-    > >          ab->buildCostume();
-    > >          ab->buildHairStyle();
-    > >          return actor;
-    > >      }
-    > > 
-    > >  	//或者是不需要參數,直接調用Builder method,更加簡化
-    > >     	static Actor* consturct(){
-    > >          this->buildType();
-    > >          this->buildSex();
-    > >          this->buildFace();
-    > >          this->buildCostume();
-    > >          this->buildHairStyle();
-    > >          return actor;
-    > >      }
-    > > }
-    > > 
-    > > //如果透過以上方法簡化Director，簡化了系統的結構，但加重了Builder 的職責
-    > > //只能是創建過程十分簡單的product/建立簡單的產品，否則過於複雜就違反了 SPP 單一職責
-    > > ```
-    > >
-    > > > 可以在Builder 加入`HookMethod(鉤子)`讓`Director`更加精細的控制是否調用`buildPartX`方法，`HookMethod` 通常是`bool function()`,在`Absturct`提供默認實現。
-    > >
-    > > ```c++
-    > > //假設檢查是否Bareheaded actor
-    > > class ActorBuilder{
-    > >  protected:
-    > >  	static Actor* actor = new Actor();
-    > >  pubilc:
-    > >  	virtual void buildType() = 0;
-    > >  	virtual void buildSex() = 0;
-    > >      virtual void buildFace() = 0;
-    > >      virtual void buildCostume() = 0;
-    > >  	virtual void buildHairStyle() = 0;
-    > >      Actor* createActor(){
-    > >          return actor;
-    > >      };
-    > > 	
-    > >     bool isBareheaded(){return false;}
-    > > }
-    > > //假設實現的ActorBuilder 是 Bareheaded 就Override return true
-    > > ```
-    > >
-    > > ```c++
-    > > //Director class :ActorController
-    > > class ActorController{
-    > > 	public:
-    > >     	Actor* construct(ActorBuilder ab){
-    > >             //Actor的建構過程
-    > >             Actor* actor;
-    > >             ab->buildType();
-    > >             ab->buildSex();
-    > >             ab->buildFace();
-    > >             ab->buildCostume();
-    > >             //先檢查是否Bareheaded 進行控制是否要進行buildHair
-    > >             if(!ab->isBareheaded()){
-    > >                 ab->buildHairStyle();
-    > >             }
-    > >             actor = ab->createActor();
-    > >             retur actor; //返回建構完成的Actor
-    > >         }
-    > > }
-    > > ```
-    > >
-    > > > `HookMethod`使`Director`有更好得控制是否需要執行`buildPartX`方法
+    * > 定義(多個不同的components 組成複雜的Product):
+      >
+      > 將一個複製的Object的建構與它的表示(組件Component)分離，使得同樣的建構過程(Component的建構)可以創建不同的表示(同一個Component可以與不用的Components組合)
+      >
+      > > **與抽象工廠(Absturct)的區別**
+      > >
+      > > * 抽象工廠:就是生產某一個部件的工廠，而且是放回一些了相關的Product
+      > > * 創建者模式:通過具體的Builder去指導Director去生成複雜的對象
+      >
+      > ---
+      >
+      > **優點**
+      >
+      > * Client無需知道建立/組成產品的細節，讓Client在相同的過程下(Builder不一樣)就可以建立出不用的Product
+      > * 每一個具體的`Builder`都是互相獨立的，如要新增`Builder`的具體class，直進行擴展。而且`Director`是對`Absbstruct class`進行編程,所以無需修改代碼，符合`Open-Close Principe`,且系統擴展也方便
+      > * 可以增加程序(`HookMethod`)來更精細得控制創建過程
+      >
+      > **缺點**
+      >
+      > * 每個產品的建立都有相似的部分，在這種情況下才適合用`Builder Patterns`,如那種很多Component都不一樣的，不適合使用，所以，使用受到限制
+      > * 如果某個Product需要多個Builder來實現複雜的變化，會導致吸引變得龐大，會增加系統的理解難點和運行成本
+      >
+      > ---
+      >
+      > *概念*:
+      >
+      > > Builder:為抽象(Abstuct)/界面(Interface),提供創建各部分的Method 以及return的Product
+      > >
+      > > ConcreteBuilder:Implement Builder ，提供各個Component的建立方法以及裝備方法
+      > >
+      > > Product :包含多個Components的複雜Object
+      > >
+      > > Director : 負責安排Builder組裝的順序，Client會之間與Director 進行互動，都過setter等注入方式配置複雜Object的屬性
+      >
+      > ---
+      > ```c++
+      > //簡單的例子
+      > //Product class
+      > class Product{
+      >     private:
+      >     	//組成的Component
+      >     	std::string partA;
+      >     	std::string partB;
+      >     	std::string partC;
+      >     public:
+      >     //各個Component的設置以及獲取方法
+      >     //PartA,B,C的setter跟getter
+      > }
+      > ```
+      >
+      > ```c++
+      > //Builder 的Abstract ：builder將會實現什麼方法
+      > class Builder{
+      >     protected Product* product = new Product(); //新建Product,透過setter getter 去改變
+      >     pubilc:
+      >     	virtual void buildPartA() = 0;
+      >     	virtual void buildPartB() = 0;
+      >     	virtual void buildPartC() = 0;
+      > 
+      >     	//工廠方法
+      >     	Product *getResult(){
+      >             return product
+      >         }
+      > }
+      > ```
+      >
+      > ```c++
+      > //Director :建立Product的順序，以及分離Client和Creation
+      > class Director{
+      >     private:
+      >     	Builder* builder; //用什麼builder 去build Product
+      >     public:
+      >     	Director(Builder* builder){
+      >             this->builder = builder
+      >         }
+      > 
+      >     	//修改Product的建立的builder
+      >     	void setBuilder(Builder* builder){
+      >             this->builder = builder
+      >         }
+      > 
+      >     	Product* productBuild(){
+      >             //如何建立Product
+      >             //假設順序A B C
+      >             builder->buildPartA();
+      >             builder->buildPartB();
+      >             builder->buildPartC();
+      >             return builder->getResult(); //完成後返回
+      >         }
+      > }
+      > 
+      > ```
+      >
+      > ```c++
+      > //Client
+      > int main(){
+      >     Builder* builder = new ConcreteBuilder(); //使用此builder 建立Product
+      >     Director* director = new Director(builder);
+      >     Product* product = director->construct(); //返回 建立好的Product
+      >     //...
+      >     return
+      > }
+      > ```
+      >
+      > ---
+      >
+      > ```mermaid
+      > classDiagram
+      > 	ActorBuilder <|-- HeroBuilder
+      > 	ActorBuilder <|-- AngelBuilder
+      > 	ActorBuilder <|-- DevilBuilder
+      > 	ActorBuilder *-- Actor
+      > 	ActorController ..> ActorBuilder
+      > 
+      > 
+      > 	class Actor{
+      >         -type : stirng
+      >         -sex : string
+      >         -face : string
+      >         -constume : string
+      >         -hairstyle : string
+      >         +void setType(string type)
+      >         +void setSex(string type)
+      >         +void setFace(string type) 
+      >         +void setCostume(string type)
+      >         +void setHairStyle(string type) 
+      >         +string getType()
+      >         +string getSex()
+      >         +string getFace()
+      >         +string getCostume()
+      >         +string getHairStyle()
+      > 	}
+      > 
+      > 	class ActorBuilder{
+      > 		#actor:Actor
+      > 		+void buildType()
+      > 		+void buildSex()
+      > 		+void buildFace()
+      > 		+void buildCostume()
+      > 		+void buildHairStyle()
+      > 		+Actor createActor()
+      > 	}
+      > 
+      > 	class HeroBuilder{
+      > 		#actor:Actor
+      > 		+void buildType()
+      > 		+void buildSex()
+      > 		+void buildFace()
+      > 		+void buildCostume()
+      > 		+void buildHairStyle()
+      > 		+Actor createActor()
+      > 	}
+      > 
+      > 	class AngelBuilder{
+      > 		+void buildType()
+      > 		+void buildSex()
+      > 		+void buildFace()
+      > 		+void buildCostume()
+      > 		+void buildHairStyle()
+      > 	}
+      > 
+      > 	class DevilBuilder{
+      > 		+void buildType()
+      > 		+void buildSex()
+      > 		+void buildFace()
+      > 		+void buildCostume()
+      > 		+void buildHairStyle()
+      > 	}
+      > 
+      > 	class ActorController{
+      > 		+Actor construct(ActorBuilder)
+      > 	}
+      > ```
+      > ```c++
+      > //以上Class Diagram的實際例子
+      > //Actor(Product)
+      > class Actor{
+      >     private:
+      > 		std::string type;
+      >     	std::string sex; 
+      >     	std::string face
+      >     	std::string costume;
+      >     	std::string hairStyle;
+      >     public:
+      >     	void setType(std::string type){
+      >             //set the type
+      >         }
+      > 
+      >     	void setSex(std::string sex){
+      >             //set the sex
+      >         }
+      > 
+      >     	void setFace(std::string face){
+      >             //set the face
+      >         }
+      > 
+      >     	void setCostume(std::strig costume){
+      >             //set the custume
+      >         }
+      > 
+      >     	void setHairStyle(std::string HairStyle){
+      >             //set the hairStyle
+      >         }
+      > 
+      >     	std::string getType(){
+      >             //return the type
+      >         }
+      > 
+      >         std::string getSex(){
+      >             //return the type
+      >         }
+      > 
+      >         std::string getFace(){
+      >             //return the type
+      >         }
+      > 
+      >         std::string getCostume(){
+      >             //return the type
+      >         }
+      > 
+      >         std::string getHairStyle(){
+      >             //return the type
+      >         }
+      > }
+      > ```
+      >
+      > ```c++
+      > //ActorBuilder：Builder(Abstruct)
+      > class ActorBuilder{
+      >     protected:
+      >     	Actor* actor = new Actor();
+      >     pubilc:
+      >     	virtual void buildType() = 0;
+      >     	virtual void buildSex() = 0;
+      >         virtual void buildFace() = 0;
+      >         virtual void buildCostume() = 0;
+      >     	virtual void buildHairStyle() = 0;
+      >         Actor* createActor(){
+      >             return actor;
+      >         };
+      > }
+      > ```
+      >
+      > ```c++
+      > //Implement Builder
+      > //Hero
+      > class HeroActor{
+      >     pubilc:
+      >     	void buildType(){
+      >             this->actor->setType("Hero");
+      >         };
+      >     	void buildSex(){
+      >             this->actor->setSex("Male");
+      >         };
+      >        	void buildFace(){
+      >             this->actor->setFace("Handsome");
+      >         };
+      >         void buildCostume(){
+      >             this->actor->setCostume("Armor");
+      >         };
+      >     	void buildHairStyle(){
+      >             this->actor->setHairStyle("Elegant");
+      >         };
+      > }
+      > 
+      > //Angle
+      > class AngleActor{
+      >     pubilc:
+      >     	void buildType(){
+      >             this->actor->setType("Angle");
+      >         };
+      >     	void buildSex(){
+      >             this->actor->setSex("Female");
+      >         };
+      >        	void buildFace(){
+      >              this->actor->setFace("Pretty");
+      >         };
+      >         void buildCostume(){
+      >             this->actor->setCostume("White Skirt");
+      >         };
+      >     	void buildHairStyle(){
+      >             this->actor->setHairStyle("Long Hair");
+      >         };
+      > }
+      > 
+      > //Devil
+      > class DevilActor{
+      >     pubilc:
+      >     	void buildType(){
+      >             this->actor->setType("Devil");
+      >         };
+      >     	void buildSex(){
+      >             this->actor->setSex("Demon");
+      >         };
+      >        	void buildFace(){
+      >             this->actor->setFace("gly");
+      >         };
+      >         void buildCostume(){
+      >              this->actor->setCostume("Black Clothes");
+      >         };
+      >     	void buildHairStyle(){
+      >             this->actor->setHairStyle("Bald");
+      >         };
+      > }
+      > ```
+      >
+      > ```c++
+      > //ActorContoller:Director
+      > class ActorController{
+      > 	public:
+      >     	Actor* construct(ActorBuilder ab){
+      >             //Actor的建構過程
+      >             Actor* actor;
+      >             ab->buildType();
+      >             ab->buildSex();
+      >             ab->buildFace();
+      >             ab->buildCostume();
+      >             ab->buildHairStyle();
+      >             actor = ab->createActor();
+      >             retur actor; //返回建構完成的Actor
+      >         }
+      > }
+      > ```
+      >
+      > ```c++
+      > //Client
+      > int main(){
+      >     //生成hero actor
+      >     ActorBuilder* heroBuilder = new HeroBuilder();
+      >     ActorController* acController = new ActorController();
+      >     Actor* ac = acController(heroBuilder);
+      > 
+      >     //生成Angel actor
+      >     ActorBuilder* angelBuilder = new angelBuilder();
+      >     ActorController* acController2 = new ActorController();
+      >     Actor* ac = acController2(angelBuilder);
+      > 
+      >     //生成Devil actor
+      >     ActorBuilder* devilBuilder = new DevilBuilder();
+      >     ActorController* acController3 = new ActorController();
+      >     Actor* ac = acController3(devilBuilder);
+      > }
+      > ```
+      >
+      > > **可以簡化以上例子(如何建構的過程不複雜，可以把Director的``construct``寫到builder``static method``)**
+      > >
+      > > ```c++
+      > > class ActorBuilder{
+      > >  protected:
+      > >  	static Actor* actor = new Actor();
+      > >  pubilc:
+      > >  	virtual void buildType() = 0;
+      > >  	virtual void buildSex() = 0;
+      > >      virtual void buildFace() = 0;
+      > >      virtual void buildCostume() = 0;
+      > >  	virtual void buildHairStyle() = 0;
+      > >      Actor* createActor(){
+      > >          return actor;
+      > >      };
+      > > 
+      > >  	static Actor* consturct(ActorBuilder* ab){
+      > >          ab->buildType();
+      > >          ab->buildSex();
+      > >          ab->buildFace();
+      > >          ab->buildCostume();
+      > >          ab->buildHairStyle();
+      > >          return actor;
+      > >      }
+      > > 
+      > >  	//或者是不需要參數,直接調用Builder method,更加簡化
+      > >     	static Actor* consturct(){
+      > >          this->buildType();
+      > >          this->buildSex();
+      > >          this->buildFace();
+      > >          this->buildCostume();
+      > >          this->buildHairStyle();
+      > >          return actor;
+      > >      }
+      > > }
+      > > 
+      > > //如果透過以上方法簡化Director，簡化了系統的結構，但加重了Builder 的職責
+      > > //只能是創建過程十分簡單的product/建立簡單的產品，否則過於複雜就違反了 SPP 單一職責
+      > > ```
+      > >
+      > > > 可以在Builder 加入`HookMethod(鉤子)`讓`Director`更加精細的控制是否調用`buildPartX`方法，`HookMethod` 通常是`bool function()`,在`Absturct`提供默認實現。
+      > >
+      > > ```c++
+      > > //假設檢查是否Bareheaded actor
+      > > class ActorBuilder{
+      > >  protected:
+      > >  	static Actor* actor = new Actor();
+      > >  pubilc:
+      > >  	virtual void buildType() = 0;
+      > >  	virtual void buildSex() = 0;
+      > >      virtual void buildFace() = 0;
+      > >      virtual void buildCostume() = 0;
+      > >  	virtual void buildHairStyle() = 0;
+      > >      Actor* createActor(){
+      > >          return actor;
+      > >      };
+      > > 	
+      > >     bool isBareheaded(){return false;}
+      > > }
+      > > //假設實現的ActorBuilder 是 Bareheaded 就Override return true
+      > > ```
+      > >
+      > > ```c++
+      > > //Director class :ActorController
+      > > class ActorController{
+      > > 	public:
+      > >     	Actor* construct(ActorBuilder ab){
+      > >             //Actor的建構過程
+      > >             Actor* actor;
+      > >             ab->buildType();
+      > >             ab->buildSex();
+      > >             ab->buildFace();
+      > >             ab->buildCostume();
+      > >             //先檢查是否Bareheaded 進行控制是否要進行buildHair
+      > >             if(!ab->isBareheaded()){
+      > >                 ab->buildHairStyle();
+      > >             }
+      > >             actor = ab->createActor();
+      > >             retur actor; //返回建構完成的Actor
+      > >         }
+      > > }
+      > > ```
+      > >
+      > > > `HookMethod`使`Director`有更好得控制是否需要執行`buildPartX`方法
 
 ---
