@@ -20,3 +20,12 @@
 |合成複用原則(Composition Reuse Principle) | 盡量使用Object Composition(在要使用的Object的地方把用到的Object注入),而不是繼承能達到目的.(減少依賴)|
 |迪米特法則(Law of Demeter) | 一個軟件實體應盡可能地與其他實體發生互相作用.(就是不用跟不是朋友(注入)的Object 直接通訊)|
 ---
+### 創建式
+| 模式(Patterns) |
+| :------------: |
+|簡單工廠模式(Simple Factory Pattern) | 
+|工廠模式(Factory Pattern) | 
+|抽象工廠模式(Abstract Factory Pattern) | 
+|單例模式(Singleton Pattern) |
+|原形模式(Prototype Pattern) | 
+|建立者模式(Builder Pattern) | 
