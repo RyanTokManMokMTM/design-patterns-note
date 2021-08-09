@@ -13,8 +13,31 @@
     * `抽象工廠模式(Abstract Factory Pattern)`
       * 相同產品族(相同約束的產品)都在同一個工廠生產
         * 對於新增產品族符合`開閉原則`,但是對於修改或者刪除`產品等級結構`違反
-  * 結構型模式
-  * 行為型模式
+    * 單例模式(`Sigleton Pattern`)
+      * 只提供靜態方法讓外部存取class(`getInstance()`),而且系統中只存在一個Instance
+      * `constructor`對外隱藏,外部無法透過new的方法新增Instance
+      * 內部建立Instance 有2種方法
+        * 餓漢式:`static MyClass* myClass = new MyClass() `,在系統運作時就先new Instance
+          * 問題:假設如果沒有使用到該Instance會浪費系統資源
+        * 懶漢式:`static MyClass* myClass = nullptr;`,在`client` call `GetInstance()`的時候在function 裡面檢測 `static MyClass* myClass = nullptr` 是否為`nullptr` ,`nullptr`就new Instance，否則return Instance
+          * 問題:多線程中，可能是有出錯的情況，多個線程同時new,產生不同的Instance
+          * 解決方法1:加入`Mutux`以及使用`double-Check Locking`
+          * 解決方法2:在class裡面加入`static class`,只有在call ``getInstance()``才會生成
+        * 違反`SPP`，又是工廠又是Product
+        * 難擴展，不是抽象/界面
+    * 原形模式(Prototype pattern)-自己就是一個工廠(Factory)
+      * 通過複製自己來克隆與自己一摸一樣的Class，而且記憶體不一樣
+      * 包含
+        * 淺克隆(`Shallow-Clone`)(只有value type 才會被複製，其他只會複製記憶體位置)
+        * 深克隆(`Deep-Clone`)(所有類型都會被複製)
+      * 可以透過`Prototype manager`來進行原形克隆，透過Hash的方式matching 要複製的Class
+      * 違反`OCP`,如果要修改`Clone`的方法，必須修改代碼
+    * 創建者模式:
+      * 透過`Builder`定義具體的建立方法與配置,通過`Director`進行`Product`的創建過程(Call `Builder`的`buildPartX 方法`)，並返回完成後的`Product`
+      * `Client`只會與`Director`互動，並且獲取配置好的`Product`
+      * 使用`HookMethod`使`Director`更好的控制創建過程
+      * 違反:如果簡化了`Director`合併到`Builder`，如果`Consturct(建立)方法`過於複雜，而且需要合拼與建立過多的Components,便會違反`SSP`
+      * 不適合產品/創建過程不相似的Product
 
 ---
 
@@ -95,6 +118,52 @@
   > **這個模式可以讓Object(product)的設置簡化，client無需知道/一直弄複雜的設置，而且透過多態性和使用了里氏替換原則(Lisko Subsititution princeple)，使系統更容易擴展**
   >
   > ---
+  > ```mermaid
+  > classDiagram
+  > 	FileLoggerFactory ..> FileLogger : create
+  > 	DatabaseLoggerFactory  ..> DatabaseLogger : create
+  > 
+  > 	FileLoggerFactory ..|> LoggerFactory
+  > 	DatabaseLoggerFactory ..|> LoggerFactory
+  > 
+  > 	FileLogger ..|> Logger
+  > 	DatabaseLogger ..|> Logger
+  > 
+  > 	class Logger{
+  > 		<<abstruct>>
+  > 		+void writeLog()
+  > 	}
+  > 
+  > 	class FileLogger{
+  > 		+void writeLog()
+  > 	}
+  > 
+  > 	class DatabaseLogger{
+  > 		+void writeLog()
+  > 	}
+  > 
+  > 
+  > 	class LoggerFactory{
+  > 		<<abstruct>>
+  > 		+Logger createLogger()
+  > 	}
+  > 
+  > 	class FileLoggerFactory{
+  > 		+Logger createLogger()
+  > 	}
+  > 
+  > 	class DatabaseLoggerFactory{
+  > 		+Logger createLogger()
+  > 	}
+  > 	
+  > 
+  > 	
+  > 	Client ..> LoggerFactory
+  > 	Client ..> Logger
+  > 
+  > ```
+  >
+  > 
   >
   > ```c++
   > //Factory 透過Abstract來繼承/實現
@@ -133,11 +202,11 @@
   >     	Logger* createLogger(){
   >             //init file logger 
   >             //TODO init etc
-  >             
+  > 
   >             //create file logger
   >             Logger* logger = new FileLogger();
   >             //TODO Create file etc
-  >             
+  > 
   >             return Logger;
   >         }
   > }
@@ -159,10 +228,10 @@
   >     Logger *logger = factory->createLogger(); //return the Product that it is initialized
   >     Logger->wirteLog();
   >     return;
-  >    
+  > 
   >     //如果想讓系統有更多靈活性和課擴展性，可以透過xml來進行配置，不需透過修過client的代碼
   >     //只需更新xml中的設置，在代碼中新增新的Product 以及新增的Factory 並重新編譯便可
-  >     
+  > 
   >     //除了默認的設置方法外，還想透過傳入String的方法來自定義設計，例如連接要DB，文件的路徑等等
   >     //可以透過Override Abstruct class 的func來進行設置
   >     /*
@@ -222,6 +291,94 @@
     > * **產品等級結構穩定，在設計完成後不會在系統更改/刪除產品等級結構(開閉原則的傾斜性)**
     >
     > ---
+    > ``` mermaid
+    > classDiagram
+    > 	class SkinFactory{
+    > 		<<abstruct>>
+    > 		+Button createButton()
+    > 		+TextFidld createTextField()
+    > 		+ComboBox createComboBox()
+    > 	}
+    > 	
+    > 	class SpringSkinFactory{
+    > 		+Button createButton()
+    > 		+TextFidld createTextField()
+    > 		+ComboBox createComboBox()
+    > 	}
+    > 	
+    > 	class SummerSkinFactory{
+    > 		+Button createButton()
+    > 		+TextFidld createTextField()
+    > 		+ComboBox createComboBox()
+    > 	}
+    > 	
+    > 	SpringSkinFactory ..|>  SkinFactory
+    > 	SummerSkinFactory ..|>  SkinFactory
+    > 	
+    > 	class Button{
+    > 		<<abstruct>>
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class TextField{
+    > 		<<abstruct>>
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class ComboBox{
+    > 		<<abstruct>>
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SpringButton{
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SummerButton{
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SpringTexField{
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SummerTexField{
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SpringComboBox{
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SummerComboBox{
+    > 		+void display()
+    > 	}
+    > 	
+    > 	SpringButton ..|> Button
+    > 	SummerButton ..|> Button
+    > 	
+    > 	SpringTexField ..|> TextField
+    > 	SummerTexField ..|> TextField
+    > 	
+    > 	SpringComboBox ..|> ComboBox
+    > 	SummerComboBox ..|> ComboBox
+    > 	
+    > 	SpringSkinFactory  ..> SpringButton : create
+    > 	SpringSkinFactory  ..> SpringTexField : create
+    > 	SpringSkinFactory  ..> SpringComboBox : create
+    > 	
+    > 	SummerSkinFactory  ..> SummerButton : create
+    > 	SummerSkinFactory  ..> SummerTexField : create
+    > 	SummerSkinFactory  ..> SummerComboBox : create
+    > 	
+    > 	client ..> SkinFactory : use
+    > 	client ..> Button : use
+    > 	client ..> TextField : use
+    > 	client ..> SkinFactory : use
+    > 	
+    > ```
+    >
+    > 
     >
     > ```c++
     > //🌰UI
@@ -347,18 +504,18 @@
     >     Button* button = factory->createButton();
     >     TextField* textField = factory->createTextField();
     >     ComboBox* comboBox = factory->createComboBox();
-    >     
+    > 
     >     button->draw();  //畫出Summer Style的Button
     >     textField->draw(); //畫出Summer Style的textField
     >     comboBox->draw(); //畫出Summer Style的comboBox
-    >     
+    > 
     >     //最好透過XML文件，修過XML的設置使用不用Style的UI
     >     return;
     > }
     > ```
     >
 
-+ 單例模式(Singleton Pattern)
++ 單例模式(`Singleton Pattern`)
 
   + > 定義(就是一個類只有1個Instance)：
     >
@@ -380,6 +537,21 @@
     > * 有點違反了Single-responsibility Principe，因為他又是工廠的角色(new Instance)，又是Product的角色(可以透過Static返回的Instance 做操作)
     >
     > ---
+    > ```mermaid
+    > classDiagram
+    > 	class LoadBalancer{
+    > 		-LoadBalancer instance
+    > 		-List serverList
+    > 		-LoadBalancer()
+    > 		+LoadBalancer getiadBalancer()
+    > 		+void addServer()
+    > 		+void removeServer()
+    > 		+string getServer()
+    > 	}
+    > 	LoadBalancer o-- LoadBalancer : Shared
+    > ```
+    >
+    > 
     >
     > ```c++
     > //Task Manager 🌰
@@ -468,6 +640,7 @@
     >
     > * **2種解決方法**
     >   * *餓漢式Singleton*
+    >
     >     * 就是在定義Static variable的時候就new Instance，所以在class 加載時候就已經被實例化了
     >     * 問題:無論系統是否使用這個,它都會實例化
     >
@@ -543,7 +716,7 @@
     >       	    	return HolderClass::instance
     >       		}
     >       	}
-    >                                                             
+    >                               
     >       //就是靜態單例沒有作為Singleton的成員 所以加載時候不會被實例化
     >       //getInstance()被呼叫時候才會呼叫HolderClass 並實例化
     >       ```
@@ -575,9 +748,34 @@
     >
     > **違背原則:**
     >
-    > * 如果修稿Prototype 的Clone 方法會違背``SPP``
+    > * 如果修改Prototype 的Clone 方法會違背``OCP``
     >
     > ---
+    > ```mermaid
+    > classDiagram
+    > 	class Object{
+    > 		<<abstruct>>
+    > 		+Object Clone()
+    > 	}
+    > 
+    > 	class Log{
+    > 		-string name
+    > 		-string data
+    > 		-string content
+    > 		+void setName(string name)
+    > 		+void setData(string date)
+    > 		+void setContent(string content)
+    > 		+string getName()
+    > 		+string getData()
+    > 		+strint getContnent()
+    > 		+Object Clone()
+    > 	}
+    > 
+    > 	Log --|> Object
+    > 	Client ..> Log
+    > ```
+    >
+    > 
     >
     > ```c++
     > //簡單的Prototype的🌰
@@ -604,7 +802,7 @@
     >              cloneObj->setAttr(this->attr);
     >              return cloneObj;
     >          }
-    >     
+    > 
     > }
     > 
     > class PrototypeB : public Prototype{
@@ -629,13 +827,13 @@
     > 
     > int main(){
     >     //先new 一個Instance ，再透過call clone method 進行Clone
-    >     
+    > 
     >     //Clone A and store in CloneObjA
     >     //複製A的Prototype(模板)
     >     Prototype* objA = new PrototypeA();
     >     Prototype* CloneObjA = onjA->Clone();
-    >     
-    >     
+    > 
+    > 
     >     //Clone B and store in CloneObjB
     >     //複製B的Prototype(模板)
     >     Prototype* objB = new PrototypeB();
@@ -679,6 +877,75 @@
     > > Prototype Manager = 負責建立Prototype的Factory
     > >
     > > 透過PM裡面的Hash來獲取要複製的Prototype
+    > ```mermaid
+    > classDiagram
+    > 	class Prototype{
+    > 		<<absstruct>>
+    > 		+Prototype clone()
+    > 	}
+    > 	
+    > 	class ConcretePrototypeA{
+    > 		+Prototype Clone()
+    > 	}
+    > 	
+    > 	class ConcretePrototypeB{
+    > 		+Prototype Clone()
+    > 	}
+    > 	
+    > 	ConcretePrototypeA --|> Prototype
+    > 	ConcretePrototypeB --|> Prototype
+    > 	
+    > 	class PrototypeManager{
+    > 		-Map PrototypeMap
+    > 		+void add(string,Prototype)
+    > 		+Prototype get(string)
+    > 	}
+    > 	
+    > 	client ..> PrototypeManager : create
+    > 		client ..> Prototype
+    > ```
+    >
+    > ```mermaid
+    > classDiagram
+    > 	class Document{
+    > 		<<abstruct>>
+    > 		+Document clone()
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class FAR {
+    > 		+Document clone()
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class SRS{
+    > 		+Document clone()
+    > 		+void display()
+    > 	}
+    > 	
+    > 	class DRS{
+    > 		+Document clone()
+    > 		+void display()
+    > 	}
+    > 	
+    > 	FAR ..|> Document
+    > 	SRS ..|> Document
+    > 	DRS ..|> Document
+    > 	
+    > 	class PrototypeManager{
+    > 		-prototypeMap Map 
+    > 		-PrototypeManager static 
+    > 		+PrototypeManager()
+    > 		+AddDoc(string,Document) void 
+    > 		+getDoc() Document 
+    > 		+getPrototypeManager() static PrototypeManager
+    > 	}
+    > 	
+    > 	client ..> PrototypeManager
+    > 	client ..> Document
+    > ```
+    >
+    > 
     >
     > ```c++
     > //生成不同文件模板的栗子
@@ -721,17 +988,17 @@
     >             hashMap["far"] = new OfficialDocument();
     >             hashMap["srs"] = new OfficialDocument();
     >         }
-    >          
+    > 
     >     public:
     >     	void addOfficeDoc(std::string,OfficialDocument* doc){
     >             //add pair to hashMap and instance
     >         }
-    >     	
+    > 
     >         OfficialDocument* getOfficeDoc(std::string key){
     >             //get OfficialDocument clone from map for the key
     >             //return the clone
     >         }
-    >     
+    > 
     >     	static PrototypeManager* getInstance(){
     >             return pm;
     >         }
@@ -742,12 +1009,12 @@
     >     //get Feasibility Analysis Report clone
     >     OfficialDocument doc1 = pm->getOfficeDoc("far");
     >     OfficialDocument doc2 = pm->getOfficeDoc("far");
-    >     
+    > 
     >     OfficialDocument doc3 = pm->getOfficeDoc("src");
     >     OfficialDocument doc4 = pm->getOfficeDoc("src");
-    > 	
+    > 
     >     //透過key value patterns 獲取要clone的Instance
-    >     
+    > 
     >     return;
     > }
     > ```
