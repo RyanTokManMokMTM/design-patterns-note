@@ -29,3 +29,11 @@
 |單例模式(Singleton Pattern) |
 |原形模式(Prototype Pattern) | 
 |建立者模式(Builder Pattern) | 
+
+### 結構型模式
+| 模式(Patterns) |
+| :------------: |
+|適配器模式(Adapter Pattern) | 
+|橋接模式(Bridge Pattern) | 
+|組合模式(Composite Pattern) | 
+|裝飾模式(Decorator Pattern) |
