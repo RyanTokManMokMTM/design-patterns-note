@@ -23,7 +23,7 @@
 ### 創建式
 | 模式(Patterns) | 簡單描述(Simple description) |
 | :------------: | :-------------------------:
-|簡單工廠模式(Simple Factory Pattern) |使用一個類建立不同的對象,Client 傳入1個String 返回一個對象|
+|簡單工廠模式(Simple Factory Pattern) |使用一個對象建立不同的對象,Client 傳入1個String 返回一個對象|
 |工廠模式(Factory Pattern) | Comming soon... |
 |抽象工廠模式(Abstract Factory Pattern) | Comming soon... |
 |單例模式(Singleton Pattern) |Comming soon...  |
