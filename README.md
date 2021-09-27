@@ -21,19 +21,21 @@
 |迪米特法則(Law of Demeter) | 一個軟件實體應盡可能地與其他實體發生互相作用.(就是不用跟不是朋友(注入)的Object 直接通訊)|
 ---
 ### 創建式
-| 模式(Patterns) |
-| :------------: |
-|簡單工廠模式(Simple Factory Pattern) | 
-|工廠模式(Factory Pattern) | 
-|抽象工廠模式(Abstract Factory Pattern) | 
-|單例模式(Singleton Pattern) |
-|原形模式(Prototype Pattern) | 
-|建立者模式(Builder Pattern) | 
+| 模式(Patterns) | 簡單描述(Simple description) |
+| :------------: | :-------------------------:
+|簡單工廠模式(Simple Factory Pattern) |Comming soon... |
+|工廠模式(Factory Pattern) | Comming soon... |
+|抽象工廠模式(Abstract Factory Pattern) | Comming soon... |
+|單例模式(Singleton Pattern) |Comming soon...  |
+|原形模式(Prototype Pattern) |Comming soon...  |
+|建立者模式(Builder Pattern) | Comming soon... |
 
 ### 結構型模式
-| 模式(Patterns) |
-| :------------: |
-|適配器模式(Adapter Pattern) | 
-|橋接模式(Bridge Pattern) | 
-|組合模式(Composite Pattern) | 
-|裝飾模式(Decorator Pattern) |
+| 模式(Patterns) |簡單描述(Simple description)|
+| :------------: | :------------------------:|
+|適配器模式(Adapter Pattern) | Comming soon... |
+|橋接模式(Bridge Pattern) | Comming soon... |
+|組合模式(Composite Pattern) | Comming soon... | 
+|裝飾模式(Decorator Pattern) | Comming soon... |
+|外觀模式(Facade Pattern) |Comming soon...  |
+|享元模式(FlayWeight Pattern) | Comming soon... |
