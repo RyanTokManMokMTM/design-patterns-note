@@ -2,7 +2,7 @@
 
 ----
 
-* **適配器模式(Adapter Pattern)**
+* **適配器模式(`Adapter Pattern`)**
 
    > 定義(就是加入一個Adapter的class 去調用其他接口):
    >
@@ -185,7 +185,6 @@
    > > 這個模式可以讓繼承的子類只實現自己想要的方法，其他方法都為默認實現(空方法)
 
 * 橋接模式(`Bridge Pattern`)
-
 > 定義(將多個維度分離成獨立的維度-解決多層繼承的互相影響的問題)通過組合不同維度:
 >
 > 將抽象部分與它的實現部分分離,使他們都可以獨立地變化(**分離維度**)，透過分離結構使用橋接/關聯的方式進行互動
@@ -834,7 +833,7 @@
     >> * 透明組合模式(以上例子的方法)-這個方法不安全，因為沒必要或者不應該存在的方法也實現了
     >> * 安全組合模式(就是Abstract 只Declared 有必要的方法，其他的就是實體類自行去實現。問題是client 就必要要對實體類進行編程，無法通過抽象類進行編程)-不夠透明(必須對實體類編程)
 
-* 裝飾模式(Decorator Pattern)
+* 裝飾模式(`Decorator Pattern`)
 
   * > 定義:(該模式解決複用的問題，以關聯取代繼承) -> `裝飾類`給對象新增額外的職責(取代繼承)
     >
@@ -960,7 +959,7 @@
     >
     > ---
     >
-    > **裝飾模式的對象設計**
+    > **裝飾模式的設計**
     >
     > > Component: 具體類以及裝飾類的共同父類，讓client可以透明操作，一致處理操作
     > >
@@ -1171,6 +1170,651 @@
     > * 半透明裝飾模式(Semi-Transparent Decorator pattern)
     >   * Client 對構建使用抽象編程,但是對於裝飾類則使用具體進行編程(為了分開調用新增的方法以及原構建的方法)
     >   * **問題:因為具體構建並沒有Override父類的方法,而且再也不是父類的類型，所以無法再進行2次裝飾，注入的對象是抽象類，而不能是具體類**
+
+* 外觀模式(`Facade Pattern`)
+
+  * > 定義:  => 通過一個外觀類(Facade)把子系統(Service)的內部與外部的通訊分割開, 不用與多個子系統打交道(複雜)
+    >
+    > 為子系統中的一組接口提供一個統一的入口(外部都通過該入口與內部通訊),這入口使子系統更加容易使用。
+    >
+    > => 能減少類與類之間的耦合,Client 無需跟Subsystem進行交換
+    >
+    > ---
+    >
+    > **優點:**
+    >
+    > * 對Client屏蔽子系統,減少Client處理的對象,使客戶端代碼更簡單
+    > * 減少Client與子系統的耦合,子系統改變不會影響Client,調整facade即可
+    > *  修改一個子系統對其他系統沒有影響，而且子系統改變不會影響到Facade
+    >
+    > **缺點:**
+    >
+    > * 客戶端必須通過Facade 才能與子系統溝通，可能會對客戶端的訪問做太多限制，影響可變性與靈活性
+    > * 如果設計不好，新增子系統可能需要修改Facade 的源代碼，會違反`OCP`
+    >
+    > ---
+    >
+    > **使用場地:**
+    >
+    > 1. 當要為複雜的子系統提供單一的入口時，可用
+    > 2. Client與子系統之間存在很大的依賴(與多個子系統做互動),可將Client與子系統解耦
+    > 3. 在層次化結構中,可通過Facade定義每一層的入口，層與層之間不之間交流/聯繫,減低耦合
+    >
+    > ---
+    >
+    > **外觀模式的設計**
+    >
+    > * 包含2個角色
+    >   * Facade(外觀角色): 被Client 調用，調用對應的子系統的功能/職責，從而與子系統溝通
+    >   * SubSystem(子系統(內部)): 可以是1個或者多個子系統的Set，這是Set實現了子系統的功能，調用(Client/Facade)子系統的功能從而執行子系統的業務。
+    >
+    > ---
+    >
+    > **模式實現:**
+    >
+    > > 子系統:可以是類/Module/Sub-system/etc...
+    >
+    > ```mermaid
+    > classDiagram
+    > class Client{
+    > 			
+    > }
+    > 
+    > class Facade{
+    > 			
+    > }
+    > Client ..> Facade
+    > Facade o-- SubSystemA
+    > Facade o-- SubSystemB
+    > Facade o-- SubSystemC
+    > 
+    > class SubSystemA{
+    > 			
+    > }
+    > 
+    > class SubSystemB{
+    > 			
+    > }
+    > 
+    > class SubSystemB{
+    > 			
+    > }
+    > ```
+    >
+    > ```c++
+    > //Sub-System
+    > class SubSystemA{
+    >     public:
+    >     	void methodA{}
+    > }
+    > 
+    > class SubSystemB{
+    >     public:
+    >     	void methodB{}
+    > }
+    > 
+    > class SubSystemC{
+    >     public:
+    >     	void methodC{}
+    > }
+    > ```
+    >
+    > ```c++
+    > //Facade
+    > class Facade{
+    >     private:
+    >         SubSystemA* systemA = new SubSystemA();
+    >      	SubSystemA* systemB = new SubSystemB();
+    >      	SubSystemA* systemC = new SubSystemC();
+    >     
+    >     public:
+    >     	void callMethod(){
+    >             systemA->methodA();
+    >             systemB->methodB();
+    >             systemC->methodC();
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > int main(){
+    >     Facade* facede = new Facade();
+    >     facede->callMethod()
+    > }
+    > ```
+    >
+    > ---
+    >
+    > **具體例子(讀取文件,加密,解密):**
+    >
+    > ```mermaid
+    > classDiagram
+    > class FileReader{
+    > 	+Reader(string) string
+    > }
+    > 
+    > class FileWriter{
+    > 	+Write(string) void
+    > }
+    > 
+    > class CipherMachine{
+    > 	+Encrypt(string) string
+    > }
+    > 
+    > class EncryptFacade{
+    > 	-FileReader reader
+    > 	-FileWriter writer
+    > 	-CipherMachine cipher
+    > 
+    > 	+EncryptFacade()
+    > 	+FileEncrypt(string,string) void
+    > }
+    > 
+    > EncryptFacade o-- FileReader
+    > EncryptFacade o-- FileWriter
+    > EncryptFacade o-- CipherMachine
+    > ```
+    >
+    > ```c++
+    > //Sub system
+    > class FileReader{
+    >     public:
+    >     	string Read(string fileNameSrc){
+    >             //Read Plain Text
+    >             //return the plain text
+    >             return file.str();
+    >         }
+    > }
+    > 
+    > class FileWriter{
+    >     public:
+    >     	void Write(string encryptString,string FileNameDes){
+    >             //save encryptString and to the file
+    >             printf("saved!");
+    >         }
+    > }
+    > class CipherMachine{
+    >     public:
+    >     	string Encrypt(string plainText){
+    >             printf("encrypting string");
+    >             return encryptedStr
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > //facade system
+    > class EncryptFacade{
+    >     private:
+    >     	FileReader *reader = nullptr;
+    >     	FileWriter *writer = nullptr;
+    >     	CipherMachine *cipher = nullptr;
+    >     public:
+    >     	EncryptFacade(){
+    >           	reader = new FileReader();
+    >             writer = new FileWriter();
+    >             cipher = new CipherMachine();
+    >         }
+    >     
+    >     	void FileEncrypt(string fileNameScr,string fileNameDes){
+    >             string plainText = reader->Read(fileNameScr);
+    >             string encryptStr =  writer->Encrypt(plainText);
+    >             writer->Write(encryptStr,fileNameDes);
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > //client use facade 
+    > int main(){
+    >     EncryptFacade * facade = new EncryptFacade();
+    >     facade->FileEncrypt("plain.txt","des.txt");
+    >     //read the encrypted text from des.txt
+    >     //etc...
+    > }
+    > ```
+    >
+    > ---
+    >
+    > > 使用抽象Facade 解決需要修改Facade 違反`ocp`問題 ->一定程度上能解決
+    > >
+    > > 例子新增一個新的`CipherMachine`
+    >
+    > **對抽象外觀進行編程**
+    >
+    > ```mermaid
+    > classDiagram
+    > class AbstractEncryptFacade{
+    > 	<<Abstract>>
+    > 	+FileEncrpyt(string src,string dsc) void
+    > }
+    > 
+    > class EncryptFacade{
+    > 	-Reader reader
+    > 	-Writer writer
+    > 	-cipher CipherMachine
+    > 	
+    > 	+EncryptFacade()
+    >     +FileEncrpyt(string src,string dsc) void
+    > }
+    > 
+    > EncryptFacade o-- Reader
+    > EncryptFacade o-- Writer
+    > EncryptFacade o-- CipherMachine
+    > 
+    > class NewEncryptFacade{
+    > 	-Reader reader
+    > 	-Writer writer
+    > 	-cipher NewCipherMachine
+    > 	
+    >     +FileEncrpyt(string src,string dsc) void
+    > }
+    > 
+    > NewEncryptFacade o-- Reader
+    > NewEncryptFacade o-- Writer
+    > NewEncryptFacade o-- NewCipherMachine
+    > 
+    > 
+    > EncryptFacade --|> AbstractEncryptFacade
+    > NewEncryptFacade --|> AbstractEncryptFacade
+    > 
+    > class Reader{
+    > 	+Read(string src) string
+    > }
+    > 
+    > class Writer{
+    > 	+Write(string str,dsc) void
+    > }
+    > 
+    > class CipherMachine{
+    > 	+Encrypt(string plainText) string
+    > }
+    > 
+    > class NewCipherMachine{
+    > 	+NewEncrypt(string plainText) string
+    > }
+    > 
+    > 
+    > 
+    > ```
+
+* 享元模式(`Flyweight Pattern`)
+
+  * > 定義(就是分享資源:如果有多個類似或者相同的對象都分享同一個對象) ->具有相同內部狀態的對象對存在享元池(Flyweight Pool)中
+    >
+    > 2種狀態:
+    >
+    > * 不變的狀態(內部的狀態(Intrinsic)->共享的部分)：不會隨著環境而變化
+    >   * 如:組成一個字符 AVA -> A這個對象是可分享,內部的狀態，都是A
+    > * 可變的狀態(外部的狀態(Extrinsic)->不共享的部分) ：會隨著環境而變化
+    >   * 如:組成一個字符 AVA，前面的A是紅色,5號字,後面的A是黑色,3號字等,外部狀態,透過注入來改變
+    >
+    > 運用共享技術有效得支持大量的顆粒度對象的複用。系統只使用少量的對象,使用的對象都很相似,狀態的變化很小,可以實現對象的多次複用。由於享元模式要求能夠共享的對象比較是`顆粒度的對象(很小的對象)`。享元模式又被稱為輕量級模式。
+    >
+    > ---
+    >
+    > **優點**
+    >
+    > * 可以極大的減少內存中的對象屬性,有相同或者相似的對象只有一份(同一的記憶體位置)，從而節省資源
+    > * 享元模式對外邊的狀態(ExtrinsicState)是獨立的不會影響到內部的狀態，從而使對象可以在不用的環境下被共享
+    >
+    > **缺點**
+    >
+    > * 會使系統變得複雜,享元模式需要分離出內部狀態(Intrinsic`不變`)以及外邊(Extrinsic`因環境改變`),使程序logic變得複雜
+    > * 享元模式為了共享對象，需要將部分狀態外部化(可以被改變的狀態)，因為被外部化，該部分的狀態透過注入改變享元對象的外邊狀態,而讀取外邊的狀態會使運行時間變長!
+    >
+    > ---
+    >
+    > **使用場地**
+    >
+    > 1. 如果系統有大量相同或者相似的對象，造成內存大量消耗,可使用享元對象
+    > 2. 如果對象大部分的狀態可以被外部化(可以因環境改變而改變狀態),透過注入把狀態傳入到對象中
+    > 3. 因為享元模式需要維護享元池,需要消耗系統的一定的資源,需多次使用的享元對象才值得使用享元模式
+    >
+    > ---
+    >
+    > **設計例子**
+    >
+    > ```mermaid
+    > classDiagram
+    > class FlyWeight{
+    > 	<<Abstract>>
+    > 	+operation(extrainsicState)
+    > }
+    > 
+    > class ConcreteFlyWeight{
+    > 	-intrinsicState
+    > 	+operation(extrainsicState)
+    > }
+    > 
+    > class UnsharedConcreteFlyWeight{
+    > 	-allState
+    > 	+operation(extrainsicState)
+    > }
+    > 
+    > ConcreteFlyWeight ..|>  FlyWeight
+    > UnsharedConcreteFlyWeight ..|>  FlyWeight
+    > 
+    > class FlyWeightFactory{
+    > 	-FlyWeight HashMap
+    > 	+getFlyWeight(string key) FlyWeight
+    > }
+    > 
+    > FlyWeightFactory o-- FlyWeight
+    > 
+    > ```
+    >
+    > > * FlyWeight:抽象享元對象declared 具體享元對象公共的方法
+    > >
+    > > * ConcreteFlyWeight : 具體的享元對象,存儲了內部狀態(intrinsic state)，通常會結合單例模式共產同一對象
+    > >
+    > > * UnSharedConcreteFlyWeight : 不提供分享的享元對象，可以直接實例化(該類不提供分享)
+    > >
+    > > * FlyWeightFactory: 享元對象工廠，該工廠保存了一個HashMap作為享元池(FlyWeight Pool)，Client通過key存取享元對象，如果池子中沒有則新建新的對象, 加入池子放回給client。
+    >
+    > ```c++
+    > class FlyWeightFactory{ //享元對象工廠例子
+    >     //定義一個HashMap 作為key-value pattern 的享元池
+    >     private:
+    >     	HashMap<string,*FlyWeight> flyWeightPool;
+    >     public:
+    >     	FlyWeight getFlyWeight(string key){
+    >             if(flyWeightPool.find(key) != flyWeightPool.end()){
+    >                 return flyWeightPool.find(key)->second;
+    >             }else{
+    >                FlyWeight* fw = new FlyWeight();
+    >                 flyWeightPool.insert(pair<string,*FlyWeight>(key,fw));
+    >                 return fw;
+    >             }
+    >         }
+    > }
+    > ```
+    >
+    > > 享元模式的狀態(內部/外部)分開處理
+    > >
+    > > 內部:作為對象的成員
+    > >
+    > > 外邊:通過注入的方式添加到享元對象中
+    >
+    > ```c++
+    > class FlyWeight{
+    >     private: 
+    >     	string intrinsicState; //同一個享元對象有相同的內部狀態
+    >     public:
+    >     	FlyWeight(string intrinsicState){
+    >             this->intrinsicState = intrinsicState;
+    >         }
+    > 
+    >     	//而外邊狀態不會保存在享元對象中
+    >     	//在使用該對象時傳入不同的外邊狀態進行配置
+    >     	void operation(string extrinsicState){
+    >             //TODO 
+    >             //setting Up....
+    >             //....
+    >         }
+    > }
+    > ```
+    >
+    > ---
+    >
+    > **具體例子(棋子)**
+    >
+    > ```mermaid
+    > classDiagram
+    > class IgoChess{
+    > 	<<Abstract>>
+    > 	+getColor() string
+    > 	+display() void
+    > }
+    > 
+    > class BlackChess{
+    > 	+getColor() string
+    > }
+    > 
+    > class WhiteChess{
+    > 	+getColor() string
+    > }
+    > 
+    > BlackChess --|> IgoChess
+    > WhiteChess --|> IgoChess
+    > 
+    > class IgoChessFactory{
+    > 	-IgoChessFactory instance
+    > 	-HashMap chessPool
+    >     +IgoChessFactory()
+    >     +getInstance() IgoChessFactory
+    >     +getIgoChess(string key)IgoChess
+    > }
+    > 
+    > IgoChessFactory o-- IgoChess
+    > IgoChessFactory <-- IgoChessFactory
+    > 
+    > 
+    > ```
+    >
+    > ```c++
+    > class IgoChess{
+    >     public:
+    >     	virutal string getColor() = 0;
+    >     	void display(){
+    >             printf("chess color is %s!",this->getColor());
+    >         }
+    > }
+    > 
+    > class BlackChess : public IgoChess{
+    >     public:
+    >     	string getColor(){
+    >             return "black"
+    >         }
+    > }
+    > 
+    > class WhiteckChess : public IgoChess{
+    >     public:
+    >         string getColor(){
+    >             return "white"
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > //Singleton pattern
+    > class IgoChessFactory{
+    >     private:
+    >     	static HashMap<string,IgoChess> ht;
+    >     	static IgoChessFactory* Ins = new IgoChessFactory();
+    >     	IgoChessFactory(){
+    >             //init the hash map
+    >            	IgoChess* whiteChess = new WhiteckChess();
+    >             IgoChess* blackChess = new BlackChess();
+    > 
+    >             ht.insert(pair<string,IgoChess>("Black",blackChess));
+    >             ht.insert(pair<string,IgoChess>("White",whiteChess));
+    >         }
+    > 
+    >     public:
+    >     	static IgoChessFactory* getIgoChessFactoryInstace(){
+    >             return this->Ins;
+    >         }
+    > 
+    >     	static IgoChess* getIgoChess(string key){
+    >             return (IgoChess)ht.find(key);
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > //client
+    > int main(){
+    >     IgoChess *black1,*black2,*white1,*white2;
+    >     IgoChessFactory* factory;
+    > 
+    > 	factory = IgoChessFactory.getIgoChessFactoryInstace();
+    > 
+    >     black1 = factory->getIgoChess("black");
+    >     black2 = factory->getIgoChess("black");
+    >     //share same object
+    >     cout << "is same : " << black1 == black2 << endl; //is same :  true
+    > 
+    >     white1 = factory->getIgoChess("white");
+    >     white2 = factory->getIgoChess("white");
+    >     //share same object
+    >     cout << "is same : " << white1 == white2 << endl; //is same :  true
+    > 
+    >     black1->display();// chess color is black
+    >     black2->display();// chess color is black
+    >     white1->display();// chess color is white
+    >     white2->display();// chess color is white
+    > }
+    > ```
+    >
+    > ---
+    >
+    > **以上例子只有共享,不能設置其他狀態**
+    >
+    > > 加入另外一個類,用於設置外部狀態
+    >
+    > ```c++
+    > //add coordinates:
+    > class Coordinates{
+    >     private:
+    >     	int x;
+    >     	int y;
+    >     public:
+    > 		Coordinates(int x, int y){
+    >             this->x = x;
+    >             this->y = y;
+    >         }
+    > 
+    >     	//setter
+    >     	void setX(int X){
+    >             this->x = X;
+    >         }
+    > 
+    >     	void setY(int Y){
+    >             this->y = Y;
+    >         }
+    > 
+    >     	//getter
+    >     	int getX(){
+    >             return this->X;
+    >         }
+    > 
+    >     	int getY(){
+    >             return this->Y;
+    >         }
+    > }
+    > 
+    > //把該Object(外部狀態)注入到享元對象中,顯示狀態
+    > class IgoChess{
+    >     public:
+    >     	virutal string getColor() = 0;
+    >     	void display(Coordinates* coordinates){
+    >             printf("chess color is %s! And its coordinates x is %d and y is %d",this->getColor(),coordinates->getX(),coordinates->getY());
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > //client
+    > int main(){
+    >     IgoChess *black1,*black2,*white1,*white2;
+    >     IgoChessFactory* factory;
+    > 
+    > 	factory = IgoChessFactory.getIgoChessFactoryInstace();
+    > 
+    >     black1 = factory->getIgoChess("black");
+    >     black2 = factory->getIgoChess("black");
+    >     //share same object
+    >     cout << "is same : " << black1 == black2 << endl; //is same :  true
+    > 
+    >     white1 = factory->getIgoChess("white");
+    >     white2 = factory->getIgoChess("white");
+    >     //share same object
+    >     cout << "is same : " << white1 == white2 << endl; //is same :  true
+    > 
+    >     //一樣是位置相同,共享Object 當時狀態不一樣！
+    >     black1->display(new Coordinates(1,2));// chess color is black!And its coordinates x is 1 and y is 2
+    >     black2->display(new Coordinates(3,4));// chess color is black!And its coordinates x is 3 and y is 4
+    >     white1->display(new Coordinates(4,3));// chess color is white!And its coordinates x is 4 and y is 3
+    >     white2->display(new Coordinates(2,1));// chess color is white!And its coordinates x is 2 and y is 1
+    > }
+    > ```
+    >
+    > ---
+    >
+    > **復合享元模式**
+    >
+    > * 2種享元模式
+    >
+    >   * 單純享元模式
+    >
+    >     * 所有具體的享元類都是可以分享的，不包含不可分享的享元類
+    >
+    >     * ```mermaid
+    >       classDiagram
+    >       class FlyWeight{
+    >       	<<Abstract>>
+    >       	+operation(extrinsicState)
+    >       }
+    >           
+    >       class ConcreFlyWeight{
+    >       	-intrinsicState
+    >       	+opreation(extrinsicState)
+    >       }
+    >       ConcreFlyWeight --|> FlyWeight
+    >           
+    >       class FlyWeightFactory {
+    >       	-HashMap<FlyWeight> ht
+    >       	+getFlyWeight(string key) FlyWeight
+    >       }
+    >           
+    >       FlyWeightFactory o-- FlyWeight
+    >       ```
+    >
+    >   * 復合享元模式
+    >
+    >     * 復合享元類不能被分享(將單純的享元類使用組合模式組合,形成復合享元對象)
+    >
+    >     * 復合享元類一樣是抽象享元類(包含了多個單純享元類(每個享元類都具有不同的狀態，可以為他們設置相同的外部狀態))
+    >
+    >     * ```mermaid
+    >       classDiagram
+    >       class FlyWeight{
+    >       	<<Abstract>>
+    >       	+operation(extrinsicState)
+    >       }
+    >             
+    >       class ConcreFlyWeight{
+    >       	-intrinsicState
+    >       	+opreation(extrinsicState)
+    >       }
+    >       ConcreFlyWeight --|> FlyWeight
+    >             
+    >       class FlyWeightFactory {
+    >       	-HashMap<FlyWeight> ht
+    >       	+getFlyWeight(string key) FlyWeight
+    >       }
+    >             
+    >       FlyWeightFactory o-- FlyWeight
+    >       CompositeConcreteFlyWeight --|> FlyWeight
+    >       CompositeConcreteFlyWeight o-- FlyWeight
+    >             
+    >       class CompositeConcreteFlyWeight{
+    >       	 -FlyWeightflyweights 
+    >       	 +operation(extrinsicState)
+    >       	 +add(FlyWeight)
+    >       	 +remove(FlyWeight)
+    >       }
+    >             
+    >       ```
+    >
+    > ---
+    >
+    > **享元模式與其他模式連用**
+    >
+    > * 工廠模式:用於生產享元對象
+    > * 單例模式: 一個系統通常只有1個享元工廠
+    > * 組合模式： 享元模式結合組合模式可以形成復合享元模式,可以統一對多個不同內部狀態的享元模式設置外部狀態
 
   * 
 
