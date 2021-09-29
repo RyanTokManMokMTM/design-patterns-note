@@ -1217,28 +1217,31 @@
     > ```mermaid
     > classDiagram
     > class Client{
-    > 			
+    > 	
     > }
     > 
     > class Facade{
-    > 			
+    > 	
     > }
+    > 
+    > class SubSystemA{
+    > 		
+    > }
+    > 
+    > class SubSystemB{
+    > 	
+    > }
+    > 
+    > class SubSystemC{
+    > 		
+    > }
+    > 
+    > 
     > Client ..> Facade
     > Facade o-- SubSystemA
     > Facade o-- SubSystemB
     > Facade o-- SubSystemC
     > 
-    > class SubSystemA{
-    > 			
-    > }
-    > 
-    > class SubSystemB{
-    > 			
-    > }
-    > 
-    > class SubSystemB{
-    > 			
-    > }
     > ```
     >
     > ```c++
@@ -1266,7 +1269,7 @@
     >         SubSystemA* systemA = new SubSystemA();
     >      	SubSystemA* systemB = new SubSystemB();
     >      	SubSystemA* systemC = new SubSystemC();
-    >     
+    > 
     >     public:
     >     	void callMethod(){
     >             systemA->methodA();
@@ -1355,7 +1358,7 @@
     >             writer = new FileWriter();
     >             cipher = new CipherMachine();
     >         }
-    >     
+    > 
     >     	void FileEncrypt(string fileNameScr,string fileNameDes){
     >             string plainText = reader->Read(fileNameScr);
     >             string encryptStr =  writer->Encrypt(plainText);
@@ -1393,7 +1396,7 @@
     > 	-Reader reader
     > 	-Writer writer
     > 	-cipher CipherMachine
-    > 	
+    > 
     > 	+EncryptFacade()
     >     +FileEncrpyt(string src,string dsc) void
     > }
@@ -1406,7 +1409,7 @@
     > 	-Reader reader
     > 	-Writer writer
     > 	-cipher NewCipherMachine
-    > 	
+    > 
     >     +FileEncrpyt(string src,string dsc) void
     > }
     > 
@@ -1756,18 +1759,18 @@
     >       	<<Abstract>>
     >       	+operation(extrinsicState)
     >       }
-    >           
+    >                   
     >       class ConcreFlyWeight{
     >       	-intrinsicState
     >       	+opreation(extrinsicState)
     >       }
     >       ConcreFlyWeight --|> FlyWeight
-    >           
+    >                   
     >       class FlyWeightFactory {
     >       	-HashMap<FlyWeight> ht
     >       	+getFlyWeight(string key) FlyWeight
     >       }
-    >           
+    >                   
     >       FlyWeightFactory o-- FlyWeight
     >       ```
     >
@@ -1783,29 +1786,29 @@
     >       	<<Abstract>>
     >       	+operation(extrinsicState)
     >       }
-    >             
+    >                         
     >       class ConcreFlyWeight{
     >       	-intrinsicState
     >       	+opreation(extrinsicState)
     >       }
     >       ConcreFlyWeight --|> FlyWeight
-    >             
+    >                         
     >       class FlyWeightFactory {
     >       	-HashMap<FlyWeight> ht
     >       	+getFlyWeight(string key) FlyWeight
     >       }
-    >             
+    >                         
     >       FlyWeightFactory o-- FlyWeight
     >       CompositeConcreteFlyWeight --|> FlyWeight
     >       CompositeConcreteFlyWeight o-- FlyWeight
-    >             
+    >                         
     >       class CompositeConcreteFlyWeight{
     >       	 -FlyWeightflyweights 
     >       	 +operation(extrinsicState)
     >       	 +add(FlyWeight)
     >       	 +remove(FlyWeight)
     >       }
-    >             
+    >                         
     >       ```
     >
     > ---
@@ -1816,5 +1819,360 @@
     > * 單例模式: 一個系統通常只有1個享元工廠
     > * 組合模式： 享元模式結合組合模式可以形成復合享元模式,可以統一對多個不同內部狀態的享元模式設置外部狀態
 
-  * 
+* 代理模式(`Proxy pattern`)
+
+  * > 定義:(Client 與 對象中插入另外一個對象)
+    >
+    > 給某一個對象提供一個代理或者占位符(一個代理的東西),並由代理對象控制原來對象的訪問
+    >
+    > `透過代理對象使Client 間接訪問真實的對象，起到中介的作用`
+    >
+    > > 讓Client 一致對待代理對象以及真實的對象，因此,可以使用抽象編程
+    >
+    > ---
+    >
+    > **優點:**
+    >
+    > * 能夠協調協調者(Client)和被協調者(業務對象),一定程度上減低系統的耦合度(2者不是直接進行溝通)
+    > * Client可以針對抽象進行編程,對客戶端隱藏代碼對象以及業務對象，而且對於新增或者刪除,甚至是更換代碼對象都無需修改源碼(透過配置文件取代)，符合`ocp`,系統有更好的靈活性以及可擴展性
+    > * 不同的代理模式有不同的優點
+    >   * 遠程代理(作為代理不同記憶體位置的調用)
+    >   * 虛擬代理(作為代理高消耗對象的暫時替代)
+    >   * 緩衝代理(作為操作結果暫時的緩存)
+    >   * 保護代理(作為控制對象的訪問)
+    >   * 智能引用代理(作為對象應用)
+    >
+    > **缺點:**
+    >
+    > * 要在Client 與 真實對象之間加入一個代理對象，可能會讓處理變慢，如包含代理模式，會造成處理速度變慢
+    > * 實現某些代碼模式比較複雜，而且實現代碼模式需要額外的工作，如`remote proxy`
+    >
+    > ---
+    >
+    > **使用場地:**
+    >
+    > > 對於不同情況可以使用不同的代理模式
+    >
+    > 1. Client 對象需要訪問遠端主角的對象 -> `Remote Proxy`
+    > 2. 當對象需要消耗較多的對象時,需要一個消耗資源較小的資源時候,可以使用 -> `Virtual Proxy`
+    > 3. 當某些操作被頻繁訪問,可以把結果進行暫存,相同的操作只需放回緩存中的結果即可 -> `Cache Proxy`
+    > 4. 當需要操作一個對象的訪問權(需要驗證等等)，為不用用戶提供不同的訪問 -> `Protect Proxy`
+    > 5. 當需要為一個對象的訪問(reference)提供一些額外的操作時，可以使用 -> `Smart Reference Proxy`
+    >
+    > ---
+    >
+    > **設計例子**
+    >
+    > ```mermaid
+    > classDiagram
+    > class Client{
+    > 	
+    > }
+    > 
+    > class Obejct{
+    > 	+request() void
+    > }
+    > 
+    > class Proxy {
+    > 	-ProxyRealObject oj
+    > 	+prequest() void
+    > 	+request() void
+    > 	+postRequest() void
+    > }
+    > 
+    > class ProxyRealObject{
+    > 	+request() void
+    > }
+    > 
+    > ProxyRealObject ..|> Obejct
+    > Proxy ..|> Obejct
+    > 
+    > Proxy o-- ProxyRealObject
+    > Client --> Proxy
+    > 
+    > ```
+    >
+    > 
+    >
+    > > Description(真實設計比這複雜很多)
+    > >
+    > > * Client : 客戶端
+    > >
+    > > * Object : 抽象對象,Declared 了主題和代碼主題的共同接口，讓任何主題的地方都可以使用代理主題
+    > >
+    > > * Proxy : 代理角色,包含了對真實主題(需代碼的對象)的引用,從而可以對真實注意進行操作，而且可以在對真實主題前/後做其他操作。因為代理對象中提供與真實主題角色相同的接口，所以可以進行替換
+    > >
+    > > * ProxyRealObject:真實主題的角色,代表真實角色的對象,會實現真的操作業務，客戶端通過帶來代碼角色間接調用真實角色中定義的操作。
+    >
+    > ```c++
+    > class Object{ //抽象類 代理對象以及業務對象 實現
+    >     public:
+    >     	virtual void request() = 0; 
+    > }
+    > ```
+    >
+    > ```c++
+    > class ProxyRealObject : public Object{
+    >     public:
+    >     	override void request(){
+    >             //to do for current object
+    >         }
+    > }
+    > 
+    > class Proxy : public Object{
+    >     private:
+    >     	ProxyRealObject* object = new ProxyRealObject();// reference
+    >     public:
+    >     	void preRequest(){
+    >             //to do preRequst
+    >         }
+    >     
+    >     	void postRequest(){
+    >             //to do postRequst
+    >         }
+    >     
+    >     	override void request(){
+    >             preRequest(); //before call obejct
+    >             //to do some service
+    >             object->request();
+    >             
+    >             postRequest(); //before call obejct
+    >         }
+    > 
+    > }
+    > 
+    > //client -> proxy -> proxtObject
+    > ```
+    >
+    > ---
+    >
+    > **常用的代理模式**(設計很複雜~~)
+    >
+    > * 遠程代理(`Remote Proxy`) -> `Ambassador(大使)` ->作為不同記憶體位置對象代理的者
+    >
+    >   * > 為一個位於不同記憶體空間的對象提供一個本地的代理對象
+    >     >
+    >     > 不同的記憶體空間可以是同一台主機，也可以是另一台主機
+    >
+    > * 虛擬代理(`Virtual Proxy`) ->作為代理生成對象的代理者
+    >
+    >   * > 如果需要Create 一個資源消耗較大的對象,可以先就愛你了一個相對較小的對象表(代理者)，真正要被創建的對象,在用到的時候才會被真正的建立
+    >
+    > * 保護代理(`Protect Proxy`) ->作為控制訪問的代理者
+    >
+    >   * > 控制對一個對象的訪問(作為代理給不同用戶不用的訪問權限),可以給不同的用戶提供不同級別的使用權
+    >
+    > * 緩衝代理(`Cache Proxy`) ->作為提供臨時儲存空間的代理者
+    >
+    >   * > 為某一個目標操作的結果提供臨時的儲存空間(把操作結果暫存,如有相同的操作,透過代理者提供分享),以便多個客戶端可以共享這些結果
+    >
+    > * 智能應用代理(`Smart Reference Proxy`) ->作用對象引用的代理者
+    >
+    >   * > 當一個對象被引用時，提供一些額外的操作(如對象被調用的次數等等)
+    >
+    > ---
+    >
+    > **實際例子**(在原有業務上新增新的功能,驗證,log 等等)
+    >
+    > > 透過代理模式間接訪問真實對象,在代理模式中新增新的功能
+    > >
+    > > 代碼對象作為保護代理(驗證->才能訪問真實的對象)
+    > >
+    > > 代碼對象作為智能引用代理(調用引用對象錢做額外的操作)
+    >
+    > ```mermaid
+    > classDiagram
+    > class Searcher{
+    > 	<<Abstract>>
+    > 	+doSearch(string id,stirng keyword) string
+    > }
+    > 
+    > class ProxySearcher{
+    > 	-Logger log
+    > 	-Validator vaildator
+    > 	+doSearch(string id,stirng keyword) string
+    > 	+log(string id) void
+    > 	+validate(string id) bool
+    > }
+    > 
+    > class RealSearcher{
+    > 	+doSearch(string id,stirng keyword) string
+    > }
+    > 
+    > ProxySearcher ..|> Searcher
+    > RealSearcher ..|> Searcher
+    > 
+    > ProxySearcher o-- Validator
+    > ProxySearcher o-- Logger
+    > ProxySearcher o-- RealSearcher
+    > 
+    > class Validator{
+    > 	+validata(string id) bool
+    > }
+    > 
+    > class Logger{
+    > 	+log(string id) void
+    > }
+    > ```
+    >
+    > ```c++
+    > class Search{
+    >     public:
+    >     	virtual string doSearch(string id,string keyword) = 0
+    > }
+    > 
+    > class RealSearch : public Search{
+    >     public:
+    >     	 string doSearch(string id,string keyword){
+    >              //to do search
+    >          }
+    > }
+    > 
+    > class ProxySearch : public Search {
+    >     private:
+    >     	RealSearch *realObj = new RealSearch();// keep the reference
+    >     	Validate *validator;
+    >     	Logger *logger;
+    >     public:
+    >     	bool validate(string id){
+    >             //to do validate
+    >             validator = new Validator();
+    >             return validator->Validate(id)
+    >         }
+    >     
+    >     	void log(string keyword){
+    >             //to write logger
+    >             logger = new Logger();
+    >             logger->log(id);
+    >         }
+    >     
+    >     	string doSearch(string id,string keyword){
+    >             //to do search with reference
+    >             if(validate(id)){ //check is validated
+    >                 //search
+    >                 string result = realObj->doSeach(id,keyword);
+    >                 this->log(id);
+    >                 return result;
+    >             }else{
+    >                 return null;
+    >             }
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > //validator and logger
+    > class Validator {
+    >     public:
+    >     	bool Validate(string id){
+    >             printf("Validating database with userId %s...",id);
+    >             if(vaildateConditionPass){
+    >                 printf("UserID %s passed the validation!Welcome!",id);
+    >                 return true;
+    >             }else{
+    >                 return false;
+    >             }
+    >         }
+    > }
+    > 
+    > class Logger{
+    >     public:
+    >     	void log(string id){
+    >             printf("database updated with userID %s",id)
+    >         }
+    > }
+    > ```
+    >
+    > ```c++
+    > int main(){
+    >     Searcher* searcher;
+    >     seacher = new ProxySearch();
+    >     
+    >     //using proxy to validate and search with realObj
+    >     string resulty = seacher->doSearch("id","keyword");
+    >     printf("%s",result);
+    > }
+    > ```
+    >
+    > > 如果要新增新的機制，只需新增新的代理類，即可，符合`ocp`
+    >
+    > ---
+    >
+    > **常用的代理模式**
+    >
+    > * `Remote Proxy` :在本地端建立遠程代理對象，遠程代理對象會進行網絡相關的業務去調用遠端業務的對象,對客戶端而已是隱藏的，客戶端無需關心
+    >
+    > * `Virutal Proxy` :  對於佔用系統資源或者加載時間過長的對象，可以使用`Virtual Proxy`在真實Object創建完成之前，由`Virtual Proxy`作為替身,而當真實對象創建對象建立之後,再將`Virtual Proxy `再請求給真實的對象
+    >
+    >   * 使用Virtual Proxy的實際情況(可考慮使用) ->`可以提高系統的性能`
+    >     * 對象`本身很複雜(建立時間很久)或者網絡等原因`使得加載時間很長，可以使用Virutal Proxy(加載時間較短) 來代替真正的對象。可使用多線程來處理(1個線程用於顯示代碼對象,其他線程用於加載)。->使用代理模式可以大大減少程序啟動時間(init 代理對象時間相對較短)->在使用代碼對象引用真實對象(如果已經加載完成)
+    >     * 當一個`對象加載十分消耗系統資源`(建立需要佔用大量記憶體)時,可使用代理模式延遲建立(當要用到的時候才建立),而且使用代理對象,代理真實的對象 ,可讓重複的對象重複被利用，從而減少浪費資源，但是每次存取都需要檢測真實的對象是否已存在嗎,會需要一定的系統時間(以時間換取空間)。
+    >
+    > * `Cache Proxy`: 為操作結果提供暫時的緩存，讓這些結果可以共享,可避免重複執行，優化系統性能
+    >
+    >   * `Microsoft 範例` -> 新增`ProductDataProxy` 為 `product`業務提供緩存
+    >
+    >     * > 代理對象 提供跟真實對象的方法,對客戶端而已是沒有區別的
+    >
+    >     * ```mermaid
+    >       classDiagram
+    >       class Client{
+    >       	<<Client>>
+    >       }
+    >       
+    >       class ProductDataProxy{
+    >       	-int productTimeout$
+    >       	-bool cache$
+    >       	+GetProductByCategory(string category) lList
+    >       	+GetProductsBySearch(string text) lList
+    >       	+GetProduct(string productId) ProductInfo
+    >       }
+    >       
+    >       class Product{
+    >       	+GetProductByCategory(string category) lList
+    >       	+GetProductsBySearch(string text) lList
+    >       	+GetProduct(string productId) ProductInfo
+    >       }
+    >       Client --> ProductDataProxy
+    >       ProductDataProxy --> Product
+    >       ```
+    >
+    >     * ```c++
+    >       //簡單範例
+    >       static class ProductDataProxy{
+    >           private:
+    >           	static int productTImeOut = ToConfigTheSetting();
+    >           	static bool enableCache = ToConfigTheCache();
+    >           
+    >          	public:
+    >           	static IList GetProductByCatrgory(string category){
+    >                   Product *product = new Product();
+    >                   
+    >                   //如果cache 沒有啟用 之間調用objec
+    >                   if(!enableCache){
+    >                      return product->GetProductByCatrgory(category);
+    >                   }
+    >                   
+    >                   //透過cache
+    >                   string cacheKey = "cache" + category;
+    >                   
+    >                   //a simulated
+    >                   IList* data = (*IList)cache.Get(cacheKey);
+    >                   if(data == nullptr){
+    >                       //data not in cache
+    >                      data = product->GetProductByCatrgory(category);
+    >                       //TODO 
+    >                       //把建立好的存到cache
+    >                       //...
+    >                   }
+    >                   return data;
+    >               }
+    >           	
+    >           	//.....
+    >       }
+    >       ```
+    >
+    > ---
+    >
+    > 
 
