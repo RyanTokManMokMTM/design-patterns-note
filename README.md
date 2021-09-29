@@ -24,11 +24,11 @@
 | 模式(Patterns) | 簡單描述(Simple description) |
 | :------------: | :-------------------------:
 |簡單工廠模式(Simple Factory Pattern) |使用一個對象建立不同的對象,Client 傳入1個String 返回一個對象|
-|工廠模式(Factory Pattern) | Comming soon... |
-|抽象工廠模式(Abstract Factory Pattern) | Comming soon... |
-|單例模式(Singleton Pattern) |Comming soon...  |
-|原形模式(Prototype Pattern) |Comming soon...  |
-|建立者模式(Builder Pattern) | Comming soon... |
+|工廠模式(Factory Pattern) | 解決SFP的問題(單一原則),改為一個工廠生產一個對象 |
+|抽象工廠模式(Abstract Factory Pattern) | 把產品分類，同類型的都由一個工廠生產 |
+|單例模式(Singleton Pattern) |一個系統只提供提個實例對象(Static) |
+|原形模式(Prototype Pattern) | 提供方法(Clone)方法,透過複製自己(注意`Deep/Shallow Clone`)，產生相同的對象 |
+|建立者模式(Builder Pattern) | 對象的建立有一個特定建立的過程`不同的build方法`(如角色的創建)，適用與創建過程相似的Product|
 
 ### 結構型模式
 | 模式(Patterns) |簡單描述(Simple description)|
